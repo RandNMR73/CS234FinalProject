@@ -1,0 +1,12 @@
+name: screen_nav
+
+dependencies:
+  - python=3.11
+  - numpy
+  - matplotlib
+  - gymnasium
+  - pytest
+  - pip:
+    - torch
+
+  
