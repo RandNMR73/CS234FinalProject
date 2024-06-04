@@ -6,11 +6,15 @@
     - investigate termination and truncation in step function
 """ 
 import sys
-import numpy as np
-import matplotlib.pyplot as plt
-from gymnasium import Env, spaces
+
 import math
 import random
+import numpy as np
+import matplotlib.pyplot as plt
+
+from gymnasium import Env, spaces
+
+from screen_helper import *
 
 class ScreenNavDiscEnv(Env):
     def __init__(self, config):
@@ -31,15 +35,15 @@ class ScreenNavDiscEnv(Env):
             [220, 20, 60],
             [255, 99, 71],
             [255, 0, 0],
-            [255, 69, 0],
-            [255, 140, 0],
-            [255, 180, 0],
-            [255, 215, 0],
+            [200, 70, 0],
+            [255, 100, 0],
+            [255, 150, 0],
+            [255, 200, 0],
             [234, 229, 140],
             [255, 255, 0]
         ]
         self.screen_colors = [
-            [124, 252, 0],
+            [50, 252, 0],
             [0, 128, 0],
             [50, 205, 50],
             [32, 178, 170],
@@ -49,8 +53,8 @@ class ScreenNavDiscEnv(Env):
             [149, 0, 211],
             [228, 161, 228]
         ]
-        random.shuffle(self.button_colors)
-        random.shuffle(self.screen_colors)
+        # random.shuffle(self.button_colors)
+        # random.shuffle(self.screen_colors)
         
         self.num_cols = math.ceil(math.sqrt(self.num_buttons))
         self.button_width = math.floor(4.0 * self.width / (5 * self.num_cols + 1))
@@ -58,7 +62,7 @@ class ScreenNavDiscEnv(Env):
         self.gap_x = math.floor(self.button_width / 4)
         self.gap_y = self.gap_x
                 
-        self.states = self.set_states(
+        self.states = set_states(
             self.height,
             self.width,
             self.button_height,
@@ -72,44 +76,12 @@ class ScreenNavDiscEnv(Env):
             self.num_screens
         )
         self.states = self.states.astype(np.uint8)
-        
         self.state = 0
 
         # Define observation space
         self.output_shape = (self.height, self.width, 1) # choose dimensions of image
         self.output_full_shape = (self.height, self.width, 3) # 3: RGB
         self.observation_space = spaces.Box(low=0, high=255, shape=self.output_full_shape, dtype=np.uint8)
-    
-    def create_background(self, height, width, background_color):
-        color_grid = np.ones((height, width, 3))
-        background_color = np.array(background_color).reshape((1,1,3))
-        color_grid = color_grid * background_color 
-        return color_grid        
-
-    def add_button(self, button_height, button_width, corner_x, corner_y, color, color_grid):
-        color_grid[corner_y : corner_y + button_height, corner_x : corner_x + button_width] = np.array(color).reshape((1,1,3))
-        return color_grid
-    
-    def get_grid(self, height, width, background_color, button_height, button_width, gap_x, gap_y, colors, num_cols, num_buttons):
-        grid = self.create_background(height, width, background_color)
-        
-        for button_id in range(num_buttons):
-            col_idx = button_id % num_cols
-            row_idx = button_id // num_cols
-            corner_x = gap_x + col_idx * (gap_x + button_width)
-            corner_y = gap_y + row_idx * (gap_y + button_height)
-            grid = self.add_button(button_height, button_width, corner_x, corner_y, colors[button_id], grid)
-
-        return grid
-    
-    def set_states(self, height, width, button_height, button_width, gap_x, gap_y, colors, num_cols, screen_colors, num_buttons, num_screens):
-        states = np.empty((num_screens, height, width, 3))
-        
-        for screen_id in range(num_screens):
-            grid = self.get_grid(height, width, screen_colors[screen_id], button_height, button_width, gap_x, gap_y, colors, num_cols, num_buttons)
-            states[screen_id] = grid
-        return states
-        
 
     def render(self):
         return self.states[self.state]
