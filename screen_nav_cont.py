@@ -25,6 +25,7 @@ class ScreenNavContEnv(Env):
     def render(self):
         # game_pixels_render = self.screen.screen_ndarray() # (144, 160, 3)
         # return game_pixels_render
+        pass
 
     def reset(self):
         # restart game, skipping credits

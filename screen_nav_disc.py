@@ -11,21 +11,23 @@ import matplotlib.pyplot as plt
 from gymnasium import Env, spaces
 import math
 import random
+
 class ScreenNavDiscEnv(Env):
     def __init__(self, config):
         super(ScreenNavDiscEnv, self).__init__()
         self.agent_stats = []
         self.total_reward = 0
 
-        self.width = config['screen-width']
-        self.height = config['screen-height']
+        self.width = config['screen_width']
+        self.height = config['screen_height']
         self.seed = config['seed']
         self.device = config['device']
         self.discount = config['discount']
-        self.num_screens = config['num-screens']
-        self.num_buttons = config['num-buttons']
+        self.num_screens = config['num_screens']
+        self.num_buttons = config['num_buttons']
         self.action_space = spaces.Discrete(self.num_buttons)
-        self.button_colors = random.shuffle([
+        
+        self.button_colors = [
             [220, 20, 60],
             [255, 99, 71],
             [255, 0, 0],
@@ -35,8 +37,8 @@ class ScreenNavDiscEnv(Env):
             [255, 215, 0],
             [234, 229, 140],
             [255, 255, 0]
-        ])
-        self.screen_colors = random.shuffle([
+        ]
+        self.screen_colors = [
             [124, 252, 0],
             [0, 128, 0],
             [50, 205, 50],
@@ -46,13 +48,16 @@ class ScreenNavDiscEnv(Env):
             [138, 43, 224],
             [149, 0, 211],
             [228, 161, 228]
-        ])
-        self.num_cols = math.floor(math.sqrt(self.num_buttons)) 
-        self.button_width = math.floor(4 * self.width / (5 * self.num_cols + 1))
+        ]
+        random.shuffle(self.button_colors)
+        random.shuffle(self.screen_colors)
+        
+        self.num_cols = math.ceil(math.sqrt(self.num_buttons))
+        self.button_width = math.floor(4.0 * self.width / (5 * self.num_cols + 1))
         self.button_height = self.button_width
         self.gap_x = math.floor(self.button_width / 4)
         self.gap_y = self.gap_x
-        
+                
         self.states = self.set_states(
             self.height,
             self.width,
@@ -62,8 +67,12 @@ class ScreenNavDiscEnv(Env):
             self.gap_y,
             self.button_colors,
             self.num_cols,
-            self.screen_colors
+            self.screen_colors,
+            self.num_buttons,
+            self.num_screens
         )
+        self.states = self.states.astype(np.uint8)
+        
         self.state = 0
 
         # Define observation space
@@ -81,9 +90,9 @@ class ScreenNavDiscEnv(Env):
         color_grid[corner_y : corner_y + button_height, corner_x : corner_x + button_width] = np.array(color).reshape((1,1,3))
         return color_grid
     
-    def get_grid(self, height, width, background_color, button_height, button_width, gap_x, gap_y, colors, num_cols):
+    def get_grid(self, height, width, background_color, button_height, button_width, gap_x, gap_y, colors, num_cols, num_buttons):
         grid = self.create_background(height, width, background_color)
-        num_buttons = len(colors)
+        
         for button_id in range(num_buttons):
             col_idx = button_id % num_cols
             row_idx = button_id // num_cols
@@ -93,12 +102,12 @@ class ScreenNavDiscEnv(Env):
 
         return grid
     
-    def set_states(self, height, width, button_height, button_width, gap_x, gap_y, colors, num_cols, screen_colors):
-        states = np.array([])
-        num_screens = len(screen_colors)
+    def set_states(self, height, width, button_height, button_width, gap_x, gap_y, colors, num_cols, screen_colors, num_buttons, num_screens):
+        states = np.empty((num_screens, height, width, 3))
+        
         for screen_id in range(num_screens):
-            grid = self.get_grid(height, width, screen_colors[screen_id], button_height, button_width, gap_x, gap_y, colors, num_cols)
-            states.append(grid)
+            grid = self.get_grid(height, width, screen_colors[screen_id], button_height, button_width, gap_x, gap_y, colors, num_cols, num_buttons)
+            states[screen_id] = grid
         return states
         
 
