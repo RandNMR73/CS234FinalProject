@@ -53,8 +53,8 @@ class ScreenNavDiscEnv(Env):
             [149, 0, 211],
             [228, 161, 228]
         ]
-        # random.shuffle(self.button_colors)
-        # random.shuffle(self.screen_colors)
+        random.shuffle(self.button_colors)
+        random.shuffle(self.screen_colors)
         
         self.num_cols = math.ceil(math.sqrt(self.num_buttons))
         self.button_width = math.floor(4.0 * self.width / (5 * self.num_cols + 1))

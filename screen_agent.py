@@ -43,7 +43,5 @@ def main():
     if (args.env_type == "continuous"):
         env = ScreenNavContEnv(config)
 
-    
-
 if __name__ == '__main__':
     main()
