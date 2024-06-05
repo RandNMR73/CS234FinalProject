@@ -1,5 +1,6 @@
 from screen_nav_disc import ScreenNavDiscEnv
 from screen_nav_cont import ScreenNavContEnv
+from stable_baselines3 import DQN
 import argparse
 
 import numpy as np
@@ -7,6 +8,9 @@ import matplotlib.pyplot as plt
 
 def get_args():
     parser = argparse.ArgumentParser('RL Screen Agent', add_help=False)
+
+    # testing arguments
+    parser.add_argument('--test', choices=[False, True], default=False, type=bool)
 
     # general arguments
     parser.add_argument('--env-type', choices=['discrete', 'continuous'], default='discrete', type=str)
@@ -40,13 +44,20 @@ def get_args():
 def main():
     args = get_args()
     config = vars(args)
-    if (args.env_type == "discrete"):
+
+    if args.test:
         env = ScreenNavDiscEnv(config)
-        
         for i in range(env.num_screens):
             screen = plt.imsave('output/screen' + str(i) + '.png', env.states[i])
+
+    elif (args.env_type == "discrete"):
+        env = ScreenNavDiscEnv(config)
+        if (args.algorithm == 'DQN'):
+            model = DQN("MlpPolicy", env, verbose=1) # change params later
+            model.learn(total_timesteps=10000, log_interval=4) # 
+            model.save("dqn_cartpole")
     
-    if (args.env_type == "continuous"):
+    elif (args.env_type == "continuous"):
         env = ScreenNavContEnv(config)
 
 if __name__ == '__main__':
