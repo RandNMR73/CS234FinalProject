@@ -1,1 +1,1 @@
-python screen_agent.py
+python screen_agent.py --mode train --model-name dqn-test4 --screen-width 32 --screen-height 64 --buffer-size 10000 --total-timesteps 25000

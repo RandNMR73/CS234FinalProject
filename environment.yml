@@ -10,5 +10,6 @@ dependencies:
     - torch
     - stable_baselines3
     - datetime
-
-  
+    - tqdm
+    - rich
+    - tensorboard

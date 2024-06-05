@@ -6,6 +6,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 from stable_baselines3 import DQN
+from stable_baselines3.common.logger import configure
+
 from datetime import datetime
 
 from screen_nav_disc import ScreenNavDiscEnv
@@ -37,7 +39,7 @@ def get_args():
     # policy training arguments (DQN)
     parser.add_argument('--policy', choices=["MlpPolicy", "CnnPolicy", "MultiInputPolicy"], default="MlpPolicy", type=str)
     parser.add_argument('--lr-rate', default=1e-4, type=float)
-    parser.add_argument('--buffer-size', default=1e6, type=int)
+    parser.add_argument('--buffer-size', default=10000, type=int)
     parser.add_argument('--learning-starts', default=100, type=int)
     parser.add_argument('--batch-size', default=32, type=int)
     parser.add_argument('--tau', default=1.0, type=float)
@@ -109,17 +111,25 @@ def main():
 
     dt = datetime.now().strftime("%d-%m-%Y-%H-%M")
     output_path = "output/{}/{}/".format(args.mode, dt)
+    output_env_path = output_path + "env/"
+    output_image_path = output_env_path + "image/"
+
     os.mkdir(output_path)
+    os.mkdir(output_env_path)
+    os.mkdir(output_image_path)
 
     with open(output_path + "config.json", "w") as file:
         json.dump(config, file)
+    
+    # using custom logger
+    new_logger = configure(output_path, ["log", "tensorboard", "json"])
 
     if args.env_type == 'discrete':
         env = ScreenNavDiscEnv(config)
+        env._save_env(output_env_path)
 
         if args.mode == 'test':
-            for i in range(env.num_screens):
-                screen = plt.imsave(output_path + 'screen' + str(i) + '.png', env.states[i])
+            pass
 
         elif args.mode == 'train':
             if (args.algorithm == "DQN"):
@@ -151,6 +161,7 @@ def main():
                     device=args.device,
                     _init_setup_model=True,
                 )
+                model.set_logger(new_logger)
 
                 model.learn(
                     total_timesteps=args.total_timesteps,

@@ -112,13 +112,15 @@ class ScreenNavDiscEnv(Env):
     def render(self):
         return self.states[self.state]
 
-    def reset(self):
+    def reset(self, seed=None):
         self.total_reward = 0
         self.timesteps = 0
-        self.state = random.randint(0, self.num_screens-1)
         self.agent_stats = []
 
-        return self.state, {}
+        self.state = random.randint(0, self.num_screens-1)
+        obs = self.render()
+
+        return obs, {}
     
     def step(self, action):
         old_state = self.state
@@ -146,4 +148,14 @@ class ScreenNavDiscEnv(Env):
 
     def close(self):
         super().close() # call close function of parent's class
+    
+    def _save_env(self, path):
+        # need to save adjacency matrix, transition matrix, screen images
+        np.save(path + "adjacency_matrix.npy", self.adj_mat)
+        np.save(path + "transition_matrix.npy", self.adj_mat)
+
+        image_path = path + "image/"
+
+        for i in range(self.num_screens):
+                screen = plt.imsave(image_path + 'screen' + str(i) + '.png', self.states[i])
             
