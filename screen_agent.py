@@ -28,6 +28,8 @@ def get_args():
     parser.add_argument('--batch-size', default=32, type=int)
     parser.add_argument('--lr-value', default=0.001, type=float)
     parser.add_argument('--discount', default=1.0, type=float)
+    parser.add_argument('--max-episode-length', default=20, type=int) # tune this later
+    parser.add_argument('--sparsity-constant', default=0.0, type=float)  
 
     # VPG-specific arguments
     parser.add_argument('--lr-policy', default=0.001, type=float)

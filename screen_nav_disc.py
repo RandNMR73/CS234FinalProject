@@ -1,9 +1,5 @@
 """TODO: 
-    - add number of epochs and max length of episode as arg params
-    - set the seed of the environment in init
-    - create dynamics model
     - run DQN
-    - investigate termination and truncation in step function
 """ 
 import sys
 
@@ -27,6 +23,8 @@ class ScreenNavDiscEnv(Env):
         
         self.device = config['device']
         self.discount = config['discount']
+        self.max_ep_len = config['max_episode_length']
+        self.sparsity_const = config['sparsity_constant'] # E / V
 
         self.width = config['screen_width']
         self.height = config['screen_height']
@@ -34,7 +32,10 @@ class ScreenNavDiscEnv(Env):
         self.num_screens = config['num_screens']
         self.num_chains = config['num_chains']
         self.max_chain_length = config['max_chain_length']
-        self.num_edges = config['num_edges']        
+        self.num_edges = config['num_edges'] 
+
+        if (self.sparsity_const > 0):
+            self.num_edges = math.ceil(self.num_screens * self.sparsity_const)        
         # self.num_buttons = config['num_buttons'] # likely do not need this parameter
 
         # setting up graph structure of environment
@@ -103,12 +104,22 @@ class ScreenNavDiscEnv(Env):
         self.output_full_shape = (self.height, self.width, 3) # 3: RGB
         self.observation_space = spaces.Box(low=0, high=255, shape=self.output_full_shape, dtype=np.uint8)
 
+        # initialize reward
+        self.total_reward = 0
+
+        self.agent_stats = []
+
+        self.target = skeleton[0][-1] # node at the end of the longest chain
+        self.timesteps = 0
+
     def render(self):
         return self.states[self.state]
 
     def reset(self):
         self.total_reward = 0
+        self.timesteps = 0
         self.state = random.randint(0, self.num_screens-1)
+        self.agent_stats = []
     
     def step(self, action):
         # # store the new agent state obtained from the corresponding memory address
@@ -122,20 +133,28 @@ class ScreenNavDiscEnv(Env):
         #     'x': x_pos, 'y': y_pos, 'levels': levels
         # })
 
+        old_state = self.state
         self.state = self.transition[self.state, action]
 
         # store the new screen image (i.e. new observation) and reward    
-        obs_memory = self.render()
+        obs = self.render()
 
         # update reward
         new_reward = int(self.state == self.target) - 1
         self.total_reward += new_reward
+
+        self.agent_stats.append(
+            (old_state, action, new_reward, self.state, self.total_reward)
+        )
+
+        # update number of timesteps
+        self.timesteps+=1
         
         # for simplicity, don't handle terminate or truncated conditions here
-        terminated = False # no max number of step
-        truncated = False # no max number of step
+        terminated = (self.state == self.target) # no max number of step
+        truncated = (self.timesteps > self.max_ep_len) # no max number of step
 
-        return obs_memory, new_reward, terminated, truncated, {}
+        return obs, new_reward, terminated, truncated, {}
 
     def close(self):
         super().close() # call close function of parent's class
