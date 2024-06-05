@@ -1,1 +1,1 @@
-python screen_agent.py --num-screens 6 --num-chains 2 --num-edges 10 --max-chain-length 4 --screen-width 330 --screen-height 550
+python screen_agent.py

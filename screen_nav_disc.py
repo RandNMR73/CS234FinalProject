@@ -1,6 +1,3 @@
-"""TODO: 
-    - run DQN
-""" 
 import sys
 
 import math
@@ -18,24 +15,25 @@ class ScreenNavDiscEnv(Env):
         super(ScreenNavDiscEnv, self).__init__()
         
         # storing parameters from config dictionary
-        self.seed = config['seed']
+        self.seed = config['agent_seed']
         random.seed(self.seed) # setting random seed
         
         self.device = config['device']
-        self.discount = config['discount']
-        self.max_ep_len = config['max_episode_length']
-        self.sparsity_const = config['sparsity_constant'] # E / V
-
+        self.gamma = config['gamma']
+        
         self.width = config['screen_width']
         self.height = config['screen_height']
 
         self.num_screens = config['num_screens']
         self.num_chains = config['num_chains']
         self.max_chain_length = config['max_chain_length']
-        self.num_edges = config['num_edges'] 
+        self.num_edges = config['num_edges']
+        self.sparsity_const = config['sparsity_constant'] # E / V
 
         if (self.sparsity_const > 0):
-            self.num_edges = math.ceil(self.num_screens * self.sparsity_const)        
+            self.num_edges = math.ceil(self.num_screens * self.sparsity_const)
+
+        self.max_ep_len = config['max_episode_length']      
         # self.num_buttons = config['num_buttons'] # likely do not need this parameter
 
         # setting up graph structure of environment
@@ -106,7 +104,6 @@ class ScreenNavDiscEnv(Env):
 
         # initialize reward
         self.total_reward = 0
-
         self.agent_stats = []
 
         self.target = skeleton[0][-1] # node at the end of the longest chain
@@ -120,19 +117,10 @@ class ScreenNavDiscEnv(Env):
         self.timesteps = 0
         self.state = random.randint(0, self.num_screens-1)
         self.agent_stats = []
+
+        return self.state, {}
     
     def step(self, action):
-        # # store the new agent state obtained from the corresponding memory address
-        # # memory addresses from https://datacrystal.romhacking.net/wiki/Pok%C3%A9mon_Red/Blue:RAM_map
-        # X_POS_ADDRESS, Y_POS_ADDRESS = 0xD362, 0xD361
-        # LEVELS_ADDRESSES = [0xD18C, 0xD1B8, 0xD1E4, 0xD210, 0xD23C, 0xD268]    
-        # x_pos = self.pyboy.get_memory_value(X_POS_ADDRESS)
-        # y_pos = self.pyboy.get_memory_value(Y_POS_ADDRESS)
-        # levels = [self.pyboy.get_memory_value(a) for a in LEVELS_ADDRESSES]
-        # self.agent_stats.append({
-        #     'x': x_pos, 'y': y_pos, 'levels': levels
-        # })
-
         old_state = self.state
         self.state = self.transition[self.state, action]
 
@@ -147,12 +135,12 @@ class ScreenNavDiscEnv(Env):
             (old_state, action, new_reward, self.state, self.total_reward)
         )
 
-        # update number of timesteps
-        self.timesteps+=1
+        # update number of time steps
+        self.timesteps += 1
         
-        # for simplicity, don't handle terminate or truncated conditions here
-        terminated = (self.state == self.target) # no max number of step
-        truncated = (self.timesteps > self.max_ep_len) # no max number of step
+        # decide termination/truncation conditions
+        terminated = (self.state == self.target) # terminate environment when target state is reached
+        truncated = (self.timesteps > self.max_ep_len) # truncate environment when you exceed max time steps
 
         return obs, new_reward, terminated, truncated, {}
 
