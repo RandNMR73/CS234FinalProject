@@ -14,7 +14,8 @@ import matplotlib.pyplot as plt
 
 from gymnasium import Env, spaces
 
-from screen_helper import *
+from helper.screen_helper import *
+from helper.graph_helper import *
 
 class ScreenNavDiscEnv(Env):
     def __init__(self, config):

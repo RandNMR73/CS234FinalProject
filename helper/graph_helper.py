@@ -1,6 +1,8 @@
 import numpy as np
 import random
 
+from debug import *
+
 """
 Graph generation
     Adding home button is good
@@ -21,19 +23,6 @@ Parameters
 - number of chains
 - maximum chain length
 """
-
-# debug enable parameters
-DEBUG_ENABLED = False
-DEBUG_CODES = [0]
-
-# debug print functions
-def debug(text):
-    if (DEBUG_ENABLED):
-        print(text)
-
-def debugc(text, code):
-    if code in DEBUG_CODES:
-        print(text)
 
 # creates main frame of graph to ensure it is connected
 def create_skeleton(num_chains, max_chain_length, num_nodes):
