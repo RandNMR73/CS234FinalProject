@@ -55,7 +55,7 @@ def main():
         if (args.algorithm == 'DQN'):
             model = DQN("MlpPolicy", env, verbose=1) # change params later
             model.learn(total_timesteps=10000, log_interval=4) # 
-            model.save("dqn_cartpole")
+            model.save("dqn_screen_nav_disc")
     
     elif (args.env_type == "continuous"):
         env = ScreenNavContEnv(config)
