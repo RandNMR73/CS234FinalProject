@@ -16,7 +16,11 @@ def get_args():
     parser.add_argument('--screen-height', default=512, type=int)
 
     parser.add_argument('--num-screens', default=4, type=int)
-    parser.add_argument('--num-buttons', default=3, type=int)
+    parser.add_argument('--num-chains', default=2, type=int)
+    parser.add_argument('--max-chain-length', default=2, type=int)
+    parser.add_argument('--num-edges', default=3, type=int)
+    # parser.add_argument('--num-buttons', default=3, type=int) # likely do not need this parameter
+    
     parser.add_argument('--seed', default=1, type=int)
     parser.add_argument('--device', default='cpu', type=str)
 

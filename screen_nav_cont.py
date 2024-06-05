@@ -2,6 +2,7 @@ import sys
 import numpy as np
 import matplotlib.pyplot as plt
 from gymnasium import Env, spaces
+
 class ScreenNavContEnv(Env):
     def __init__(self, config):
         super(ScreenNavContEnv, self).__init__()

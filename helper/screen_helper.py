@@ -1,8 +1,8 @@
 import numpy as np
 import random
 
-from graph_helper import *
-from debug import *
+from helper.graph_helper import *
+from helper.debug import *
 
 # functions for creating images for each state
 def create_background(height, width, background_color):
@@ -17,6 +17,7 @@ def add_button(button_height, button_width, corner_x, corner_y, color, color_gri
 
 def get_grid(height, width, background_color, button_height, button_width, gap_x, gap_y, colors, num_cols, num_buttons):
     grid = create_background(height, width, background_color)
+    random.shuffle(colors)
     
     for button_id in range(num_buttons):
         col_idx = button_id % num_cols
@@ -27,11 +28,11 @@ def get_grid(height, width, background_color, button_height, button_width, gap_x
 
     return grid
 
-def set_states(height, width, button_height, button_width, gap_x, gap_y, colors, num_cols, screen_colors, num_buttons, num_screens):
+def set_states(height, width, button_height, button_width, gap_x, gap_y, colors, num_cols, screen_colors, num_buttons_all, num_screens):
     states = np.empty((num_screens, height, width, 3))
     
     for screen_id in range(num_screens):
-        grid = get_grid(height, width, screen_colors[screen_id], button_height, button_width, gap_x, gap_y, colors, num_cols, num_buttons)
+        grid = get_grid(height, width, screen_colors[screen_id], button_height, button_width, gap_x, gap_y, colors, num_cols, num_buttons_all[screen_id])
         states[screen_id] = grid
     return states
 

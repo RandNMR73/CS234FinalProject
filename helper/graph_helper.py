@@ -1,7 +1,7 @@
 import numpy as np
 import random
 
-from debug import *
+from helper.debug import *
 
 """
 Graph generation

@@ -20,18 +20,34 @@ from helper.graph_helper import *
 class ScreenNavDiscEnv(Env):
     def __init__(self, config):
         super(ScreenNavDiscEnv, self).__init__()
-        self.agent_stats = []
-        self.total_reward = 0
+        
+        # storing parameters from config dictionary
+        self.seed = config['seed']
+        random.seed(self.seed) # setting random seed
+        
+        self.device = config['device']
+        self.discount = config['discount']
 
         self.width = config['screen_width']
         self.height = config['screen_height']
-        self.seed = config['seed']
-        self.device = config['device']
-        self.discount = config['discount']
+
         self.num_screens = config['num_screens']
-        self.num_buttons = config['num_buttons']
-        self.action_space = spaces.Discrete(self.num_buttons)
+        self.num_chains = config['num_chains']
+        self.max_chain_length = config['max_chain_length']
+        self.num_edges = config['num_edges']        
+        # self.num_buttons = config['num_buttons'] # likely do not need this parameter
+
+        # setting up graph structure of environment
+        skeleton, length_chains = create_skeleton(self.num_chains, self.max_chain_length, self.num_screens)
+        edges = multi_chaining(self.num_chains, length_chains, skeleton, self.num_screens, self.num_edges)
+
+        self.adj_mat = generate_adjacency_matrix(edges, self.num_screens)
+
+        self.num_buttons_all = find_num_buttons_per_state(self.adj_mat)
+        self.max_num_buttons = find_max_num_buttons(self.num_buttons_all)
+        self.transition = generate_transition_matrix(self.adj_mat, self.num_screens, self.num_buttons_all, self.max_num_buttons)
         
+        # setting up physical images for the environment
         self.button_colors = [
             [220, 20, 60],
             [255, 99, 71],
@@ -57,7 +73,7 @@ class ScreenNavDiscEnv(Env):
         random.shuffle(self.button_colors)
         random.shuffle(self.screen_colors)
         
-        self.num_cols = math.ceil(math.sqrt(self.num_buttons))
+        self.num_cols = math.ceil(math.sqrt(self.max_num_buttons))
         self.button_width = math.floor(4.0 * self.width / (5 * self.num_cols + 1))
         self.button_height = self.button_width
         self.gap_x = math.floor(self.button_width / 4)
@@ -73,13 +89,16 @@ class ScreenNavDiscEnv(Env):
             self.button_colors,
             self.num_cols,
             self.screen_colors,
-            self.num_buttons,
+            self.num_buttons_all,
             self.num_screens
         )
         self.states = self.states.astype(np.uint8)
-        self.state = 0
+        self.state = random.randint(0, self.num_screens-1)
 
-        # Define observation space
+        # define action space
+        self.action_space = spaces.Discrete(self.max_num_buttons)
+
+        # define observation space
         self.output_shape = (self.height, self.width, 1) # choose dimensions of image
         self.output_full_shape = (self.height, self.width, 3) # 3: RGB
         self.observation_space = spaces.Box(low=0, high=255, shape=self.output_full_shape, dtype=np.uint8)
@@ -105,9 +124,10 @@ class ScreenNavDiscEnv(Env):
 
         self.state = self.transition[self.state, action]
 
-
         # store the new screen image (i.e. new observation) and reward    
         obs_memory = self.render()
+
+        # update reward
         new_reward = int(self.state == self.target) - 1
         self.total_reward += new_reward
         
