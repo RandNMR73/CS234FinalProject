@@ -10,8 +10,8 @@ from stable_baselines3.common.logger import configure
 
 from datetime import datetime
 
-from screen_nav_disc import ScreenNavDiscEnv
-from screen_nav_cont import ScreenNavContEnv
+from environments.screen_nav_disc import ScreenNavDiscEnv
+from environments.screen_nav_cont import ScreenNavContEnv
 
 def get_args():
     parser = argparse.ArgumentParser('RL Screen Agent', add_help=False)
@@ -110,7 +110,7 @@ def main():
     args = get_args()
     config = vars(args)
 
-    dt = datetime.now().strftime("%d-%m-%Y-%H-%M")
+    dt = datetime.now().strftime("%d-%m-%Y-%H-%M-%S")
     output_path = "output/{}/{}/".format(args.mode, dt)
     output_env_path = output_path + "env/"
     output_image_path = output_env_path + "image/"
