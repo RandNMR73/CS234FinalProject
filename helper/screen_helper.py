@@ -1,7 +1,9 @@
 import numpy as np
 import random
 
-from helper.graph_helper_old import *
+from bisect import bisect_left
+
+from helper.graph_helper import *
 from helper.debug import *
 
 # functions for creating images for each state
@@ -73,6 +75,52 @@ def generate_transition_matrix(adj_matrix, num_screens, num_buttons_all, max_num
             trans_mat[screen_id][button_id] = button_to_screen[shuffle_buttons[button_id]]
     
     return trans_mat
+
+# function for getting button index from selected pixel coordinates
+def get_button(act_x, act_y, width, height, gap_x, gap_y, button_width, button_height, num_cols, num_buttons):
+    # defining button pixel ranges in each dimension
+    x_coords = [0]
+    y_coords = [0]
+
+    for col_idx in range(num_cols):
+        b_start_x = gap_x + col_idx * (gap_x + button_width)
+        b_start_y = gap_y + col_idx * (gap_y + button_height)
+
+        b_end_x = b_start_x + button_width
+        b_end_y = b_start_y + button_height
+
+        x_coords.append(b_start_x)
+        x_coords.append(b_end_x)
+
+        y_coords.append(b_start_y)
+        y_coords.append(b_end_y)
+
+    x_coords.append(width)
+    y_coords.append(height)
+
+    act_x = int(act_x)
+    act_y = int(act_y)
+
+    # check that chosen action meets dimension restrictions
+    assert(act_x >= 0 and act_x < width)
+    assert(act_y >= 0 and act_y < height)
+
+    # check if given coordinates match up with button ranges
+    x_ind = bisect_left(x_coords, act_x)
+    y_ind = bisect_left(y_coords, act_y)
+
+    if (x_ind % 2 == 0) or (y_ind % 2 == 0):
+        return -1
+    else:
+        x_id = (x_ind - 1) / 2
+        y_id = (y_ind - 1) / 2
+
+        button_id = x_id + y_id * num_cols
+
+        if (button_id >= 0 and button_id < num_buttons):
+            return button_id
+        else:
+            return -1 # no valid button selected
 
 """ def main():
     num_chains = 1

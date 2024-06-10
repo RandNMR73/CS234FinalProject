@@ -10,7 +10,8 @@ import matplotlib as mpl
 from gymnasium import Env, spaces
 
 from helper.screen_helper import *
-from helper.graph_helper_old import *
+from helper.graph_helper import *
+from helper.utils import *
 
 class ScreenNavDiscEnv(Env):
     def __init__(self, config, adj_mat=None, transition=None, states=None, target=-1):
