@@ -1,7 +1,7 @@
 import numpy as np
 import random
 
-from helper.graph_helper import *
+from helper.graph_helper_old import *
 from helper.debug import *
 
 # functions for creating images for each state
@@ -17,13 +17,14 @@ def add_button(button_height, button_width, corner_x, corner_y, color, color_gri
 
 def get_grid(height, width, background_color, button_height, button_width, gap_x, gap_y, colors, num_cols, num_buttons):
     grid = create_background(height, width, background_color)
-    random.shuffle(colors)
+    np.random.shuffle(colors)
     
     for button_id in range(num_buttons):
         col_idx = button_id % num_cols
         row_idx = button_id // num_cols
         corner_x = gap_x + col_idx * (gap_x + button_width)
         corner_y = gap_y + row_idx * (gap_y + button_height)
+        
         grid = add_button(button_height, button_width, corner_x, corner_y, colors[button_id], grid)
 
     return grid

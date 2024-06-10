@@ -3,12 +3,14 @@ import sys
 import math
 import random
 import numpy as np
+
 import matplotlib.pyplot as plt
+import matplotlib as mpl
 
 from gymnasium import Env, spaces
 
 from helper.screen_helper import *
-from helper.graph_helper import *
+from helper.graph_helper_old import *
 
 class ScreenNavDiscEnv(Env):
     def __init__(self, config, adj_mat=None, transition=None, states=None, target=-1):
@@ -56,30 +58,17 @@ class ScreenNavDiscEnv(Env):
             self.transition = transition
         
         # setting up physical images for the environment
-        self.button_colors = [
-            [220, 20, 60],
-            [255, 99, 71],
-            [255, 0, 0],
-            [200, 70, 0],
-            [255, 100, 0],
-            [255, 150, 0],
-            [255, 200, 0],
-            [234, 229, 140],
-            [255, 255, 0]
-        ]
-        self.screen_colors = [
-            [50, 252, 0],
-            [0, 128, 0],
-            [50, 205, 50],
-            [32, 178, 170],
-            [0, 139, 139],
-            [0, 206, 209],
-            [138, 43, 224],
-            [149, 0, 211],
-            [228, 161, 228]
-        ]
-        random.shuffle(self.button_colors)
-        random.shuffle(self.screen_colors)
+        button_cmap = mpl.colormaps['autumn']
+        screen_cmap = mpl.colormaps['winter']
+
+        self.button_colors = button_cmap(np.linspace(0, 1, self.max_num_buttons)) * 255
+        self.screen_colors = screen_cmap(np.linspace(0, 1, self.num_screens)) * 255
+
+        self.button_colors = self.button_colors[:,:3].astype(int)
+        self.screen_colors = self.screen_colors[:,:3].astype(int)
+
+        np.random.shuffle(self.button_colors)
+        np.random.shuffle(self.screen_colors)
         
         self.num_cols = math.ceil(math.sqrt(self.max_num_buttons))
         self.button_width = math.floor(4.0 * self.width / (5 * self.num_cols + 1))
