@@ -37,7 +37,7 @@ def main():
     model = PPO.load(args.model_dir + args.model_name)
 
     obs, info = env.reset()
-    for i in range(args.total_timesteps):
+    for i in range(args.max_episode_length):
         while True:
             action, _states = model.predict(obs, deterministic=True)
             obs, reward, terminated, truncated, info = env.step(action)
