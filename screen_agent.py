@@ -43,6 +43,7 @@ def get_args():
 
     parser.add_argument('--max-episode-length', default=20, type=int) # tune this later
     parser.add_argument('--env-seed', default=1, type=int)
+    parser.add_argument('--save-freq', default=1000, type=int)
     
     # policy training arguments (DQN)
     parser.add_argument('--policy', choices=["MlpPolicy", "CnnPolicy", "MultiInputPolicy"], default="MlpPolicy", type=str)
@@ -85,6 +86,7 @@ def main():
 
     dt = datetime.now().strftime("%d-%m-%Y-%H-%M-%S")
     output_path = "output/{}/{}/{}/{}/".format(args.env_type, args.algorithm, args.mode, dt)
+    output_checkpoint_path = output_path + "checkpoints/"
     output_env_path = output_path + "env/"
     output_image_path = output_env_path + "image/"
 
@@ -109,7 +111,7 @@ def main():
             new_logger = configure(output_path, ["log", "tensorboard", "json"])
 
             if (args.algorithm == "DQN"):
-                train_dqn(env, args, output_path, new_logger)
+                train_dqn(env, args, output_path, new_logger, output_checkpoint_path)
 
         elif args.mode == 'eval':
             if (args.algorithm == "DQN"):
@@ -129,11 +131,11 @@ def main():
             new_logger = configure(output_path, ["log", "tensorboard", "json"])
 
             if (args.algorithm == "PPO"):
-                train_ppo(env, args, output_path, new_logger)
+                train_ppo(env, args, output_path, new_logger, output_checkpoint_path)
             if (args.algorithm == "DDPG"):
-                train_ddpg(env, args, output_path, new_logger)
+                train_ddpg(env, args, output_path, new_logger, output_checkpoint_path)
             if (args.algorithm == "SAC"):
-                train_sac(env, args, output_path, new_logger)
+                train_sac(env, args, output_path, new_logger, output_checkpoint_path)
 
         elif args.mode == 'eval':
             if (args.algorithm == "PPO"):

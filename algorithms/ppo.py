@@ -2,11 +2,12 @@ import json
 import numpy as np
 
 from stable_baselines3 import PPO
+from stable_baselines3.common.callbacks import CheckpointCallback
 
 from environments.screen_nav_cont import ScreenNavContEnv
 
 # function to train DQN algorithm given parameters
-def train_ppo(env, args, output_path, new_logger):
+def train_ppo(env, args, output_path, new_logger, output_checkpoint_path):
     # change parameters using args from argument parser
     # there are still more parameters which can be changed
     model = PPO(
@@ -29,8 +30,11 @@ def train_ppo(env, args, output_path, new_logger):
 
     model.set_logger(new_logger)
 
+    checkpoint_callback = CheckpointCallback(save_freq=args.save_freq, save_path=output_checkpoint_path)
+
     model.learn(
         total_timesteps=args.total_timesteps,
+        callback=checkpoint_callback,
         log_interval=args.log_interval,
         progress_bar=True
     )

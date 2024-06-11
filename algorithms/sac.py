@@ -6,7 +6,7 @@ from stable_baselines3 import SAC
 from environments.screen_nav_cont import ScreenNavContEnv
 
 # function to train DQN algorithm given parameters
-def train_sac(env, args, output_path, new_logger):
+def train_sac(env, args, output_path, new_logger, output_checkpoint_path):
     # change parameters using args from argument parser
     model = SAC()
 
