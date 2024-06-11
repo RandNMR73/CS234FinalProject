@@ -10,13 +10,13 @@ import matplotlib as mpl
 from gymnasium import Env, spaces
 
 from helper.screen_helper import *
-from helper.tree_helper import *
+from helper.graph_helper import *
 from helper.utils import *
 
-# discrete action space environment made using deterministic tree structure
-class ScreenNavDiscEnv(Env):
+# continuous action space environment made using skeleton/multi-chaining graph structure
+class ScreenNavContEnv(Env):
     def __init__(self, config, adj_mat=None, transition=None, states=None, target=-1):
-        super(ScreenNavDiscEnv, self).__init__()
+        super(ScreenNavContEnv, self).__init__()
         
         # storing parameters from config dictionary
         self.seed = config['agent_seed']
@@ -28,14 +28,21 @@ class ScreenNavDiscEnv(Env):
         self.width = config['screen_width']
         self.height = config['screen_height']
 
-        self.num_tiers = config['num_tiers']
-        self.num_branches = config['num_branches']
+        self.num_screens = config['num_screens']
+        self.num_chains = config['num_chains']
+        self.max_chain_length = config['max_chain_length']
+        self.num_edges = config['num_edges']
+        self.sparsity_const = config['sparsity_constant'] # E / V
 
-        self.max_ep_len = config['max_episode_length']
+        if (self.sparsity_const > 0.0):
+            self.num_edges = math.ceil(self.num_screens * self.sparsity_const)
+
+        self.max_ep_len = config['max_episode_length']      
+        # self.num_buttons = config['num_buttons'] # likely do not need this parameter
 
         # setting up graph structure of environment
-        edges, self.adj_list, self.num_screens = create_tree(self.num_tiers, self.num_branches)
-        self.num_edges = len(edges)
+        skeleton, length_chains = create_skeleton(self.num_chains, self.max_chain_length, self.num_screens)
+        edges = multi_chaining(self.num_chains, length_chains, skeleton, self.num_screens, self.num_edges)
 
         self.adj_mat = None
         if (adj_mat is None):
@@ -92,7 +99,7 @@ class ScreenNavDiscEnv(Env):
         self.state = random.randint(0, self.num_screens-1)
 
         # define action space
-        self.action_space = spaces.Discrete(self.max_num_buttons)
+        self.action_space = spaces.Box(low=np.array([0.0, 0.0]), high=np.array([self.width, self.height]), dtype=np.float)
 
         # define observation space
         self.output_shape = (self.height, self.width, 1) # choose dimensions of image
@@ -108,7 +115,7 @@ class ScreenNavDiscEnv(Env):
 
         self.target = None
         if (target == -1):
-            self.target = self.num_screens - 1 # node at the end of the longest chain
+            self.target = skeleton[0][-1] # node at the end of the longest chain
         else:
             self.target = target
         
@@ -134,17 +141,40 @@ class ScreenNavDiscEnv(Env):
     
     def step(self, action):
         old_state = self.state
-        self.state = self.transition[self.state, action]
+
+        act_x = clip(int(action[0]), 0, self.width-1)
+        act_y = clip(int(action[1]), 0, self.height-1)
+
+        button_id = get_button(
+            act_x,
+            act_y,
+            self.width,
+            self.height,
+            self.gap_x,
+            self.gap_y,
+            self.button_width,
+            self.button_height,
+            self.num_cols,
+            self.num_buttons_all[self.state]
+        )
+
+        # update state and reward
+        new_reward = None
+
+        if (button_id != -1):
+            self.state = self.transition[self.state, button_id]
+
+            new_reward = int(self.state == self.target) - 1
+        else:
+            new_reward = -1 # change this to -2 if you want to punish the agent more for not choosing a button
+        
+        self.total_reward += new_reward
 
         # store the new screen image (i.e. new observation) and reward    
         obs = self.render()
 
-        # update reward
-        new_reward = int(self.state == self.target) - 1
-        self.total_reward += new_reward
-
         # store trajectory
-        sarst = np.array([old_state, action, new_reward, self.state, self.total_reward]).reshape((1, 5))
+        sarst = np.array([old_state, act_x, act_y, button_id, new_reward, self.state, self.total_reward]).reshape((1, 7))
         if self.agent_stats is None:
             self.agent_stats = sarst
         else:

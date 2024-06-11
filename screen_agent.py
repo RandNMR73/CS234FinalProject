@@ -14,8 +14,8 @@ from environments.screen_nav_disc import ScreenNavDiscEnv
 from environments.screen_nav_cont import ScreenNavContEnv
 
 from algorithms.dqn import train_dqn, test_dqn
-from algorithms.ppo import train_ppo, test_ppo
-from algorithms.ddpg import train_ddpg, test_ddpg
+# from algorithms.ppo import train_ppo, test_ppo
+# from algorithms.ddpg import train_ddpg, test_ddpg
 
 def get_args():
     parser = argparse.ArgumentParser('RL Screen Agent', add_help=False)
@@ -35,6 +35,9 @@ def get_args():
     parser.add_argument('--max-chain-length', default=2, type=int)
     parser.add_argument('--num-edges', default=3, type=int)
     parser.add_argument('--sparsity-constant', default=0.0, type=float)
+
+    parser.add_argument('--num-tiers', default=3, type=int)
+    parser.add_argument('--num-branches', default=[1, 2, 2], type=int, nargs='+')
     # parser.add_argument('--num-buttons', default=3, type=int) # likely do not need this parameter
 
     parser.add_argument('--max-episode-length', default=20, type=int) # tune this later

@@ -1,5 +1,4 @@
 import numpy as np
-import random
 
 from helper.debug import *
 
@@ -31,9 +30,34 @@ Optional parameters???
 """
 
 # creates tree structure of graph
-def create_tree(num_tiers, num_branches_per_tier):
+# output is as an adjacency list (dictionary)
+def create_tree(num_tiers, num_branches):
     last_tier = [0]
     edges = []
+    adj_list = {}
+    adj_list[0] = []
+
+    cur_node = 1
+
+    for tier in range(num_tiers):
+        new_tier = []
+
+        for node in last_tier:
+            for branch in range(num_branches[tier]):
+                edges.append([node, cur_node])
+                edges.append([cur_node, 0])
+
+                adj_list[cur_node] = [0]
+                adj_list[node].append(cur_node)
+                new_tier.append(cur_node)
+
+                cur_node += 1
+        
+        last_tier = new_tier
+    
+    num_nodes = cur_node
+    
+    return edges, adj_list, num_nodes
 
 def generate_adjacency_matrix(edges, num_nodes):
     adj_mat = np.zeros((num_nodes, num_nodes)).astype(int)
@@ -44,27 +68,24 @@ def generate_adjacency_matrix(edges, num_nodes):
     return adj_mat
 
 """ def main():
-    num_chains = 1
-    num_nodes = 4
-    max_chain_length = 3
-    num_edges = 4
+    num_tiers = 3
+    num_branches = [1, 2, 2]
 
-    skeleton, length_chains = create_skeleton(num_chains, max_chain_length, num_nodes)
-    edges = multi_chaining(num_chains, length_chains, skeleton, num_nodes, num_edges)
+    edges, adj_list, num_nodes = create_tree(num_tiers, num_branches)
 
-    debugc("\nskeleton:", 1)
-    for chain in skeleton:
-        debugc(chain, 1)
-
-    debugc("\nedges:", 2)
+    debugc("\nedges:", 4)
     for edge in edges:
-        debugc(edge, 2)
+        debugc(edge, 4)
+    
+    debugc("\nadjacency list:", 4)
+    for i in range(num_nodes):
+        debugc(str(i) + ": " + str(adj_list[i]), 4)
     
     adj_mat = generate_adjacency_matrix(edges, num_nodes)
     
-    debugc("\nadjacency matrix:", 2)
+    debugc("\nadjacency matrix:", 4)
     for row in adj_mat:
-        debugc(row, 2)
+        debugc(row, 4)
 
 if __name__ == '__main__':
     main() """
