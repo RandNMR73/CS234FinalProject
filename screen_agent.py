@@ -74,34 +74,10 @@ def get_args():
     parser.add_argument('--dqn-traj-log-freq', default=100, type=int)
 
     # additional policy training arguments (PPO)
-<<<<<<< HEAD
     parser.add_argument('--n-epochs', default=10, type=int)
     parser.add_argument('--n-steps', default=256, type=int)
     parser.add_argument('--ppo-normalize-advantage', default=True, type=bool)
     parser.add_argument('--ppo-target-kl', default=0.01, type=float)
-||||||| e476142
-    parser.add_argument('--n-epochs', default=10, type=int)
-    parser.add_argument('--n-steps', default=256, type=int)
-=======
-    parser.add_argument('--ppo-policy', choices=["MlpPolicy", "CnnPolicy", "MultiInputPolicy"], default="MlpPolicy", type=str)
-    parser.add_argument('--ppo-lr-rate', default=3e-4, type=float)
-    parser.add_argument('--ppo-n-epochs', default=10, type=int)
-    parser.add_argument('--ppo-n-steps', default=256, type=int)
-    parser.add_argument('--ppo-batch-size', default=64, type=int)
-    parser.add_argument('--ppo-gamma', default=0.99, type=float)
-    parser.add_argument('--ppo-max-grad-norm', default=0.5, type=float)
-    parser.add_argument('--ppo-verbose', default=1, type=int)
-    parser.add_argument('--ppo-agent-seed', default=1, type=int)
-    parser.add_argument('--ppo-device', choices=['cpu', 'cuda', 'auto'], default='auto', type=str)
-    
-    parser.add_argument('--ppo-total-timesteps', default=1e6, type=int)
-    parser.add_argument('--ppo-log-interval', default=10, type=int)
-
-    # policy validation (prediction) arguments (PPO)
-    parser.add_argument('--ppo-model-name', default="", type=str)
-    parser.add_argument('--ppo-model-dir', default="", type=str)
-    parser.add_argument('--ppo-traj-log-freq', default=100, type=int)
->>>>>>> bebdc80f6685df1a5f9fa4a54f9d934ba7b03eb6
 
     # additional policy training arguments (DDPG)
     parser.add_argument('--ddpg-buffer-size', default=1000000, type=int)
