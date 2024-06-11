@@ -114,10 +114,21 @@ def main():
     config = vars(args)
 
     # Ensure all necessary keys are in the config dictionary
-    config['agent_seed'] = args.ppo_agent_seed
-    config['device'] = args.ppo_device
-    config['gamma'] = args.ppo_gamma
-    config['traj_log_freq'] = args.ppo_traj_log_freq
+    if args.algorithm == "PPO":
+        config['agent_seed'] = args.ppo_agent_seed
+        config['device'] = args.ppo_device
+        config['gamma'] = args.ppo_gamma
+        config['traj_log_freq'] = args.ppo_traj_log_freq
+    elif args.algorithm == "DQN":
+        config['agent_seed'] = args.dqn_agent_seed
+        config['device'] = args.dqn_device
+        config['gamma'] = args.dqn_gamma
+        config['traj_log_freq'] = args.dqn_traj_log_freq
+    elif args.algorithm == "DDPG":
+        config['agent_seed'] = args.ddpg_agent_seed
+        config['device'] = args.ddpg_device
+        config['gamma'] = args.ddpg_gamma
+        config['traj_log_freq'] = args.ddpg_traj_log_freq
 
     dt = datetime.now().strftime("%d-%m-%Y-%H-%M-%S")
     output_path = "output/{}/{}/{}/{}/".format(args.env_type, args.algorithm, args.mode, dt)
