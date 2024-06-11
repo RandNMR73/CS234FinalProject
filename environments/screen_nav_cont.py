@@ -19,7 +19,7 @@ class ScreenNavContEnv(Env):
         super(ScreenNavContEnv, self).__init__()
         
         # storing parameters from config dictionary
-        self.seed = config['agent_seed']
+        self.seed = config['env_seed']
         random.seed(self.seed) # setting random seed
         
         self.device = config['device']
@@ -105,7 +105,7 @@ class ScreenNavContEnv(Env):
         self.agent_stats = None
         self.trajectories = {}
         self.episode_num = 0
-        self.traj_log_req = config['traj_log_freq']
+        # self.traj_log_freq = config['traj_log_freq']
 
         self.target = None
         if (target == -1):
@@ -122,8 +122,8 @@ class ScreenNavContEnv(Env):
         self.total_reward = 0
         self.timesteps = 0
 
-        if ((self.episode_num + 1) % self.traj_log_req == 0):
-            self.trajectories[self.episode_num] = self.agent_stats
+        # if ((self.episode_num + 1) % self.traj_log_freq == 0):
+        #     self.trajectories[self.episode_num] = self.agent_stats
         
         self.agent_stats = None
         self.episode_num += 1

@@ -2,45 +2,49 @@ import json
 import numpy as np
 
 from stable_baselines3 import DQN
+from stable_baselines3.common.callbacks import CheckpointCallback
 
 from environments.screen_nav_disc import ScreenNavDiscEnv
 
 # function to train DQN algorithm given parameters
-def train_dqn(env, args, output_path, new_logger):
+def train_dqn(env, args, output_path, new_logger, output_checkpoint_path):
     # change parameters using args from argument parser
     model = DQN(
-        policy=args.dqn_policy,
+        policy=args.policy,
         env=env,
-        learning_rate=args.dqn_lr_rate,
+        learning_rate=args.lr_rate,
         buffer_size=args.dqn_buffer_size,
         learning_starts=args.dqn_learning_starts,
-        batch_size=args.dqn_batch_size,
+        batch_size=args.batch_size,
         tau=args.dqn_tau,
-        gamma=args.dqn_gamma,
+        gamma=args.gamma,
         train_freq=args.dqn_train_freq,
         gradient_steps=args.dqn_gradient_steps,
         replay_buffer_class=None,
         replay_buffer_kwargs=None,
-        optimize_memory_usage=args.dqn_optimize_memory_usage,
+        # optimize_memory_usage=args.dqn_optimize_memory_usage, # not using
         target_update_interval=args.dqn_target_update_interval,
         exploration_fraction=args.dqn_exploration_fraction,
         exploration_initial_eps=args.dqn_exploration_initial_eps,
         exploration_final_eps=args.dqn_exploration_final_eps,
-        max_grad_norm=args.dqn_max_grad_norm,
+        max_grad_norm=args.max_grad_norm,
         stats_window_size=100,
         tensorboard_log=output_path,
         policy_kwargs=None,
-        verbose=args.dqn_verbose,
-        seed=args.dqn_agent_seed,
-        device=args.dqn_device,
+        verbose=args.verbose,
+        seed=args.agent_seed,
+        device=args.device,
         _init_setup_model=True
     )
 
     model.set_logger(new_logger)
 
+    checkpoint_callback = CheckpointCallback(save_freq=args.save_freq, save_path=output_checkpoint_path)
+
     model.learn(
-        total_timesteps=args.ddpg_total_timesteps,
-        log_interval=args.ddpg_log_interval,
+        total_timesteps=args.total_timesteps,
+        callback=checkpoint_callback,
+        log_interval=args.log_interval,
         progress_bar=True
     )
 

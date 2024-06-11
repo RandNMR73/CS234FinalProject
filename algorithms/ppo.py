@@ -13,18 +13,27 @@ def train_ppo(env, args, output_path, new_logger, output_checkpoint_path):
     model = PPO(
         policy=args.policy,
         env=env,
-        learning_rate=args.lr_rate,
-        n_steps=args.n_steps,
-        batch_size=args.batch_size,
-        n_epochs=args.n_epochs,
-        gamma=args.gamma,
-        normalize_advantage=args.ppo_normalize_advantage,
-        max_grad_norm=args.max_grad_norm,
-        target_kl=args.ppo_target_kl,
+        learning_rate=args.lr_rate, # 3e-4
+        n_steps=args.ppo_n_steps, # 2048
+        batch_size=args.batch_size, # 64
+        n_epochs=args.ppo_n_epochs, # 10
+        gamma=args.gamma, # 0.99
+        gae_lambda=args.ppo_gae_lambda, # 0.95
+        clip_range=args.ppo_clip_range, # 0.2
+        clip_range_vf=None,
+        normalize_advantage=args.ppo_normalize_advantage, # True
+        ent_coef=args.ppo_ent_coef, # 0.0
+        vf_coef=args.ppo_vf_coef, # 0.5
+        max_grad_norm=args.max_grad_norm, # 0.5
+        use_sde=False, # False
+        sde_sample_freq=-1, # -1
+        rollout_buffer_class=None,
+        rollout_buffer_kwargs=None,
+        target_kl=args.ppo_target_kl, # 0.01
         stats_window_size=100,
         tensorboard_log=output_path,
         policy_kwargs=None,
-        verbose=args.verbose,
+        verbose=args.verbose, # 0
         seed=args.agent_seed,
         device=args.device,
         _init_setup_model=True,
@@ -35,9 +44,9 @@ def train_ppo(env, args, output_path, new_logger, output_checkpoint_path):
     checkpoint_callback = CheckpointCallback(save_freq=args.save_freq, save_path=output_checkpoint_path)
 
     model.learn(
-        total_timesteps=args.ppo_total_timesteps,
+        total_timesteps=args.total_timesteps,
         callback=checkpoint_callback,
-        log_interval=args.ppo_log_interval,
+        log_interval=args.log_interval,
         progress_bar=True
     )
 

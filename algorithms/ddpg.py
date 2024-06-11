@@ -2,6 +2,7 @@ import json
 import numpy as np
 
 from stable_baselines3 import DDPG
+from stable_baselines3.common.callbacks import CheckpointCallback
 
 from environments.screen_nav_cont import ScreenNavContEnv
 
@@ -14,15 +15,15 @@ def train_ddpg(env, args, output_path, new_logger, output_checkpoint_path):
         learning_rate=args.lr_rate,
         buffer_size=args.ddpg_buffer_size,
         learning_starts=args.ddpg_learning_starts,
-        batch_size=args.ddpg_batch_size,
+        batch_size=args.batch_size,
         tau=args.ddpg_tau,
-        gamma=args.ddpg_gamma,
+        gamma=args.gamma,
         train_freq=args.ddpg_train_freq,
         gradient_steps=args.ddpg_gradient_steps,
         action_noise=None,
         replay_buffer_class=None,
         replay_buffer_kwargs=None,
-        optimize_memory_usage=args.ddpg_optimize_memory_usage,
+        # optimize_memory_usage=args.ddpg_optimize_memory_usage, # not using
         tensorboard_log=output_path,
         policy_kwargs=None,
         verbose=args.verbose,
@@ -33,9 +34,12 @@ def train_ddpg(env, args, output_path, new_logger, output_checkpoint_path):
 
     model.set_logger(new_logger)
 
+    checkpoint_callback = CheckpointCallback(save_freq=args.save_freq, save_path=output_checkpoint_path)
+
     model.learn(
-        total_timesteps=args.ppo_total_timesteps,
-        log_interval=args.ppo_log_interval,
+        total_timesteps=args.total_timesteps,
+        callback=checkpoint_callback,
+        log_interval=args.log_interval,
         progress_bar=True
     )
 
