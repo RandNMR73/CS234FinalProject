@@ -39,8 +39,8 @@ def train_dqn(env, args, output_path, new_logger):
     model.set_logger(new_logger)
 
     model.learn(
-        total_timesteps=args.total_timesteps,
-        log_interval=args.log_interval,
+        total_timesteps=args.ddpg_total_timesteps,
+        log_interval=args.ddpg_log_interval,
         progress_bar=True
     )
 

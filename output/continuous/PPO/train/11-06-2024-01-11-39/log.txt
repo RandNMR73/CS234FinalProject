@@ -1,0 +1,89 @@
+Logging to output/continuous/PPO/train/11-06-2024-01-11-39/
+-----------------------------------------
+| rollout/                |             |
+|    ep_len_mean          | 17.3        |
+|    ep_rew_mean          | -17.3       |
+| time/                   |             |
+|    fps                  | 1467        |
+|    iterations           | 10          |
+|    time_elapsed         | 1           |
+|    total_timesteps      | 2560        |
+| train/                  |             |
+|    approx_kl            | 0.007295999 |
+|    clip_fraction        | 0.0254      |
+|    clip_range           | 0.2         |
+|    entropy_loss         | -2.83       |
+|    explained_variance   | -9.27e-05   |
+|    learning_rate        | 0.0003      |
+|    loss                 | 5.35        |
+|    n_updates            | 90          |
+|    policy_gradient_loss | -0.00496    |
+|    std                  | 0.994       |
+|    value_loss           | 11.7        |
+-----------------------------------------
+-----------------------------------------
+| rollout/                |             |
+|    ep_len_mean          | 18.5        |
+|    ep_rew_mean          | -18.5       |
+| time/                   |             |
+|    fps                  | 1532        |
+|    iterations           | 20          |
+|    time_elapsed         | 3           |
+|    total_timesteps      | 5120        |
+| train/                  |             |
+|    approx_kl            | 0.017006267 |
+|    clip_fraction        | 0.136       |
+|    clip_range           | 0.2         |
+|    entropy_loss         | -2.84       |
+|    explained_variance   | -2.94e-05   |
+|    learning_rate        | 0.0003      |
+|    loss                 | 2.13        |
+|    n_updates            | 190         |
+|    policy_gradient_loss | -0.0154     |
+|    std                  | 1           |
+|    value_loss           | 5.27        |
+-----------------------------------------
+------------------------------------------
+| rollout/                |              |
+|    ep_len_mean          | 17.9         |
+|    ep_rew_mean          | -17.9        |
+| time/                   |              |
+|    fps                  | 1529         |
+|    iterations           | 30           |
+|    time_elapsed         | 5            |
+|    total_timesteps      | 7680         |
+| train/                  |              |
+|    approx_kl            | 0.0061152847 |
+|    clip_fraction        | 0.0973       |
+|    clip_range           | 0.2          |
+|    entropy_loss         | -2.82        |
+|    explained_variance   | -1.32e-05    |
+|    learning_rate        | 0.0003       |
+|    loss                 | 0.167        |
+|    n_updates            | 290          |
+|    policy_gradient_loss | -0.00779     |
+|    std                  | 0.99         |
+|    value_loss           | 1.61         |
+------------------------------------------
+------------------------------------------
+| rollout/                |              |
+|    ep_len_mean          | 17.7         |
+|    ep_rew_mean          | -17.7        |
+| time/                   |              |
+|    fps                  | 1545         |
+|    iterations           | 40           |
+|    time_elapsed         | 6            |
+|    total_timesteps      | 10240        |
+| train/                  |              |
+|    approx_kl            | 0.0037775557 |
+|    clip_fraction        | 0.0621       |
+|    clip_range           | 0.2          |
+|    entropy_loss         | -2.79        |
+|    explained_variance   | 5.3e-05      |
+|    learning_rate        | 0.0003       |
+|    loss                 | -0.0112      |
+|    n_updates            | 390          |
+|    policy_gradient_loss | -0.00722     |
+|    std                  | 0.977        |
+|    value_loss           | 0.0274       |
+------------------------------------------

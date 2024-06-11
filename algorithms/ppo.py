@@ -33,9 +33,9 @@ def train_ppo(env, args, output_path, new_logger, output_checkpoint_path):
     checkpoint_callback = CheckpointCallback(save_freq=args.save_freq, save_path=output_checkpoint_path)
 
     model.learn(
-        total_timesteps=args.total_timesteps,
+        total_timesteps=args.ppo_total_timesteps,
         callback=checkpoint_callback,
-        log_interval=args.log_interval,
+        log_interval=args.ppo_log_interval,
         progress_bar=True
     )
 
