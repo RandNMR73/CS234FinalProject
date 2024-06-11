@@ -113,6 +113,12 @@ def main():
     args = get_args()
     config = vars(args)
 
+    # Ensure all necessary keys are in the config dictionary
+    config['agent_seed'] = args.ppo_agent_seed
+    config['device'] = args.ppo_device
+    config['gamma'] = args.ppo_gamma
+    config['traj_log_freq'] = args.ppo_traj_log_freq
+
     dt = datetime.now().strftime("%d-%m-%Y-%H-%M-%S")
     output_path = "output/{}/{}/{}/{}/".format(args.env_type, args.algorithm, args.mode, dt)
     output_checkpoint_path = output_path + "checkpoints/"
