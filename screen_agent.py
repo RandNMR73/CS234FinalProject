@@ -76,6 +76,8 @@ def get_args():
     # additional policy training arguments (PPO)
     parser.add_argument('--n-epochs', default=10, type=int)
     parser.add_argument('--n-steps', default=256, type=int)
+    parser.add_argument('--ppo-normalize-advantage', default=True, type=bool)
+    parser.add_argument('--ppo-target-kl', default=0.01, type=float)
 
     # additional policy training arguments (DDPG)
     parser.add_argument('--ddpg-buffer-size', default=1000000, type=int)
