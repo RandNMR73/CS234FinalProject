@@ -33,7 +33,7 @@ def train_dqn(env, args, output_path, new_logger):
         verbose=args.verbose,
         seed=args.agent_seed,
         device=args.device,
-        _init_setup_model=True,
+        _init_setup_model=True
     )
 
     model.set_logger(new_logger)

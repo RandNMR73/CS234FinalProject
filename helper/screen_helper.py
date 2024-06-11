@@ -112,8 +112,8 @@ def get_button(act_x, act_y, width, height, gap_x, gap_y, button_width, button_h
     if (x_ind % 2 == 0) or (y_ind % 2 == 0):
         return -1
     else:
-        x_id = (x_ind - 1) / 2
-        y_id = (y_ind - 1) / 2
+        x_id = (x_ind - 1) // 2
+        y_id = (y_ind - 1) // 2
 
         button_id = x_id + y_id * num_cols
 

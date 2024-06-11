@@ -8,7 +8,24 @@ from environments.screen_nav_cont import ScreenNavContEnv
 # function to train DQN algorithm given parameters
 def train_ppo(env, args, output_path, new_logger):
     # change parameters using args from argument parser
-    model = PPO()
+    # there are still more parameters which can be changed
+    model = PPO(
+        policy=args.policy,
+        env=env,
+        learning_rate=args.lr_rate,
+        n_steps=args.n_steps,
+        batch_size=args.batch_size,
+        n_epochs=args.n_epochs,
+        gamma=args.gamma,
+        max_grad_norm=args.max_grad_norm,
+        stats_window_size=100,
+        tensorboard_log=output_path,
+        policy_kwargs=None,
+        verbose=args.verbose,
+        seed=args.agent_seed,
+        device=args.device,
+        _init_setup_model=True,
+    )
 
     model.set_logger(new_logger)
 
@@ -39,7 +56,7 @@ def test_ppo(args, output_path, output_env_path):
     with open(output_path + "test_config.json", "w") as file:
         json.dump(test_config, file)
 
-    env = ScreenNavDiscEnv(
+    env = ScreenNavContEnv(
         config=test_config,
         adj_mat=adj_mat,
         transition=transition,
@@ -48,7 +65,7 @@ def test_ppo(args, output_path, output_env_path):
     )
     env._save_env(output_env_path)
     
-    model = DQN.load(args.model_dir + args.model_name)
+    model = PPO.load(args.model_dir + args.model_name)
 
     obs, info = env.reset()
     for i in range(args.total_timesteps):

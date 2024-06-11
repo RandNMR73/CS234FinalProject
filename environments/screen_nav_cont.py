@@ -42,7 +42,8 @@ class ScreenNavContEnv(Env):
             self.adj_mat = generate_adjacency_matrix(edges, self.num_screens)
         else:
             self.adj_mat = adj_mat
-
+            self.num_screens = self.adj_mat.shape[0]
+        
         self.num_buttons_all = find_num_buttons_per_state(self.adj_mat)
         self.max_num_buttons = find_max_num_buttons(self.num_buttons_all)
         
@@ -92,7 +93,7 @@ class ScreenNavContEnv(Env):
         self.state = random.randint(0, self.num_screens-1)
 
         # define action space
-        self.action_space = spaces.Box(low=np.array([0.0, 0.0]), high=np.array([self.width, self.height]), dtype=np.float)
+        self.action_space = spaces.Box(low=np.array([0.0, 0.0]), high=np.array([self.width, self.height]), dtype=np.float64)
 
         # define observation space
         self.output_shape = (self.height, self.width, 1) # choose dimensions of image

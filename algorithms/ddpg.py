@@ -39,7 +39,7 @@ def test_ddpg(args, output_path, output_env_path):
     with open(output_path + "test_config.json", "w") as file:
         json.dump(test_config, file)
 
-    env = ScreenNavDiscEnv(
+    env = ScreenNavContEnv(
         config=test_config,
         adj_mat=adj_mat,
         transition=transition,
@@ -48,7 +48,7 @@ def test_ddpg(args, output_path, output_env_path):
     )
     env._save_env(output_env_path)
     
-    model = DQN.load(args.model_dir + args.model_name)
+    model = DDPG.load(args.model_dir + args.model_name)
 
     obs, info = env.reset()
     for i in range(args.total_timesteps):

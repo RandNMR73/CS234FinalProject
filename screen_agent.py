@@ -28,8 +28,8 @@ def get_args():
     parser.add_argument('--env-type', choices=['discrete', 'continuous'], default='discrete', type=str)
     parser.add_argument('--algorithm', choices=['DQN', 'PPO', 'DDPG', 'SAC'], default='DQN', type=str)
 
-    parser.add_argument('--screen-width', default=256, type=int)
-    parser.add_argument('--screen-height', default=512, type=int)
+    parser.add_argument('--screen-width', default=6, type=int)
+    parser.add_argument('--screen-height', default=12, type=int)
 
     parser.add_argument('--num-screens', default=4, type=int)
     parser.add_argument('--num-chains', default=2, type=int)
@@ -72,44 +72,9 @@ def get_args():
     parser.add_argument('--model-dir', default="", type=str)
     parser.add_argument('--traj-log-freq', default=100, type=int)
 
-    """
-    :param policy: The policy model to use (MlpPolicy, CnnPolicy, ...)
-    :param env: The environment to learn from (if registered in Gym, can be str)
-    :param learning_rate: The learning rate, it can be a function
-        of the current progress remaining (from 1 to 0)
-    :param buffer_size: size of the replay buffer
-    :param learning_starts: how many steps of the model to collect transitions for before learning starts
-    :param batch_size: Minibatch size for each gradient update
-    :param tau: the soft update coefficient ("Polyak update", between 0 and 1) default 1 for hard update
-    :param gamma: the discount factor
-    :param train_freq: Update the model every ``train_freq`` steps. Alternatively pass a tuple of frequency and unit
-        like ``(5, "step")`` or ``(2, "episode")``.
-    :param gradient_steps: How many gradient steps to do after each rollout (see ``train_freq``)
-        Set to ``-1`` means to do as many gradient steps as steps done in the environment
-        during the rollout.
-    :param replay_buffer_class: Replay buffer class to use (for instance ``HerReplayBuffer``).
-        If ``None``, it will be automatically selected.
-    :param replay_buffer_kwargs: Keyword arguments to pass to the replay buffer on creation.
-    :param optimize_memory_usage: Enable a memory efficient variant of the replay buffer
-        at a cost of more complexity.
-        See https://github.com/DLR-RM/stable-baselines3/issues/37#issuecomment-637501195
-    :param target_update_interval: update the target network every ``target_update_interval``
-        environment steps.
-    :param exploration_fraction: fraction of entire training period over which the exploration rate is reduced
-    :param exploration_initial_eps: initial value of random action probability
-    :param exploration_final_eps: final value of random action probability
-    :param max_grad_norm: The maximum value for the gradient clipping
-    :param stats_window_size: Window size for the rollout logging, specifying the number of episodes to average
-        the reported success rate, mean episode length, and mean reward over
-    :param tensorboard_log: the log location for tensorboard (if None, no logging)
-    :param policy_kwargs: additional arguments to be passed to the policy on creation
-    :param verbose: Verbosity level: 0 for no output, 1 for info messages (such as device or wrappers used), 2 for
-        debug messages
-    :param seed: Seed for the pseudo random generators
-    :param device: Device (cpu, cuda, ...) on which the code should be run.
-        Setting it to auto, the code will be run on the GPU if possible.
-    :param _init_setup_model: Whether or not to build the network at the creation of the instance
-    """
+    # additional policy training arguments (PPO)
+    parser.add_argument('--n-epochs', default=10, type=int)
+    parser.add_argument('--n-steps', default=256, type=int)
 
     args = parser.parse_args()
     return args
