@@ -1,3 +1,5 @@
+import os
+
 import json
 import numpy as np
 
@@ -55,41 +57,119 @@ def train_ppo(env, args, output_path, new_logger, output_checkpoint_path):
     env._reset_trajs()
 
 # function to test DQN algorithm
-def test_ppo(args, output_path, output_env_path):
-    # initialize new config dictionary from previous run
-    test_config = None
-    with open(args.model_dir + 'config.json') as json_file:
-        test_config = json.load(json_file)
-    
-    # initialize remaining environment parameters from previous run
-    env_path = args.model_dir + 'env/'
-    adj_mat = np.load(env_path + 'adjacency_matrix.npy')
-    transition = np.load(env_path + 'transition_matrix.npy')
-    states = np.load(env_path + 'states.npy')
-    target = np.load(env_path + 'target.npy')[0]
+def test_ppo(args):
+    # store various paths to respective training run
+    train_path = "output/{}/{}/{}/{}/".format(args.env_type, args.algorithm, "train", args.datetime)
+    train_checkpoint_path = train_path + "checkpoints/"
+    train_env_path = train_path + "env/"
+    train_image_path = train_env_path + "image/"
 
-    with open(output_path + "test_config.json", "w") as file:
-        json.dump(test_config, file)
+    train_config_path = train_path + "config.json"
+
+    eval_path = "output/{}/{}/{}/{}/".format(args.env_type, args.algorithm, "eval", args.datetime)
+    eval_trajectories_path = eval_path + "trajectories/"
+    eval_env_path = eval_path + "env/"
+    eval_image_path = eval_env_path + "image/"
+
+    # create directories to store eval output
+    os.mkdir(eval_path)
+    os.mkdir(eval_trajectories_path)
+    os.mkdir(eval_env_path)
+    os.mkdir(eval_image_path)
+
+    # load config of the training run being evaluated and eval run
+    train_config = None
+    with open(train_config_path) as json_file:
+        train_config = json.load(json_file)
+
+    eval_config = vars(args)
+
+    # initialize environment parameters from previous training run
+    adj_mat = np.load(train_env_path + 'adjacency_matrix.npy')
+    transition = np.load(train_env_path + 'transition_matrix.npy')
+    states = np.load(train_env_path + 'states.npy')
+    target = np.load(train_env_path + 'target.npy')[0]
 
     env = ScreenNavContEnv(
-        config=test_config,
+        config=train_config,
         adj_mat=adj_mat,
         transition=transition,
         states=states,
         target=target
     )
-    env._save_env(output_env_path)
+    env._save_env(eval_env_path)
     
-    model = PPO.load(args.model_dir + args.model_name)
+    # store config of training run and eval run in eval folder
+    with open(eval_path + "train_config.json", "w") as file:
+        json.dump(train_config, file)
+    
+    with open(eval_path + "eval_config.json", "w") as file:
+        json.dump(eval_config, file)
+    
+    # recording and storing trajectories from checkpoints/model
+    do_checkpoints = eval_config["do_checkpoints"]
+    num_trajs = eval_config["num_trajectories"]
+    traj_len = None
 
-    obs, info = env.reset()
-    for i in range(args.total_timesteps):
-        while True:
-            action, _states = model.predict(obs, deterministic=True)
-            obs, reward, terminated, truncated, info = env.step(action)
-            if terminated or truncated:
+    is_discrete = train_config["env_type"] == 'discrete'
+
+    if (is_discrete):
+        traj_len = 5
+    else:
+        traj_len = 7
+
+    if (do_checkpoints):
+        save_freq = train_config["save_freq"]
+        total_timesteps = train_config["total_timesteps"]
+
+        for checkpoint in range(save_freq, total_timesteps+1, save_freq):
+            model_name = "rl_model_" + str(checkpoint) + "_steps.zip"
+            model = PPO.load(train_checkpoint_path + model_name)
+
+            traj_dir = eval_trajectories_path + "checkpoint_" + str(checkpoint) + "/"
+            os.mkdir(traj_dir)
+                        
+            for traj in range(num_trajs):
+                trajectory = None
+                start = True
+
                 obs, info = env.reset()
-                break
-    
-    env._save_trajs(output_path)
-    env._reset_trajs()
+                for i in range(args.max_episode_length):
+                    action, _states = model.predict(obs, deterministic=True)
+                    obs, reward, terminated, truncated, info = env.step(action)
+                    sarst = None
+
+                    if is_discrete:
+                        sarst = [
+                            info["s"],
+                            info["a"],
+                            info["r"],
+                            info["s'"],
+                            info["t_r"]
+                        ]
+                    else:
+                        sarst = [
+                            info["s"],
+                            info["ax"],
+                            info["ay"],
+                            info["button"],
+                            info["r"],
+                            info["s'"],
+                            info["t_r"]
+                        ]
+                    
+                    sarst = np.array(sarst)
+                    sarst.astype(np.int8)
+                    sarst = np.reshape(sarst, (1, traj_len))
+
+                    if start:
+                        trajectory = sarst
+                        start = False
+                    else:
+                        trajectory = np.append(trajectory, sarst, axis=0)
+                    
+                    if terminated or truncated:
+                        obs, info = env.reset()
+                        break
+                
+                np.save(traj_dir + "trajectory_" + str(traj) + ".npy", trajectory)

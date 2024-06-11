@@ -21,10 +21,10 @@ verbose="1"
 agent_seed="1"
 device="cpu"
 
-total_timesteps='100000'
+total_timesteps='1000000'
 log_interval="4"
 model_name="ppo-cont-test"
-save_freq='1000'
+save_freq='100000'
 
 # ppo policy arguments
 ppo_n_steps="256"

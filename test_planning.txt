@@ -1,9 +1,13 @@
-graph-based tests:
-- 05-06-2024-12-08
-- 05-06-2024-12-10
-- 05-06-2024-12-12
+-- discrete --
+discrete/DQN
+- 
 
-image-based tests:
-- 05-06-2024-10-01
-- 05-06-2024-10-02
-- 05-06-2024-10-06
+discrete/PPO
+- 
+
+-- continuous --
+continuous/PPO
+- 
+
+continuous/DDPG
+- 

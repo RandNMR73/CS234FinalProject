@@ -34,7 +34,7 @@ class ScreenNavContEnv(Env):
         self.max_ep_len = config['max_episode_length']  
 
         # setting up graph structure of environment
-        edges, self.adj_list, self.num_screens = create_tree(self.num_tiers, self.num_branches)
+        edges, adj_list, self.num_screens = create_tree(self.num_tiers, self.num_branches)
         self.num_edges = len(edges)
 
         self.adj_mat = None
@@ -90,7 +90,7 @@ class ScreenNavContEnv(Env):
         else:
             self.states = states
         
-        self.state = random.randint(0, self.num_screens-1)
+        self.state = random.randint(0, self.num_screens-2)
 
         # define action space
         self.action_space = spaces.Box(low=np.array([0.0, 0.0]), high=np.array([self.width, self.height]), dtype=np.float64)
@@ -128,7 +128,7 @@ class ScreenNavContEnv(Env):
         self.agent_stats = None
         self.episode_num += 1
 
-        self.state = random.randint(0, self.num_screens-1)
+        self.state = random.randint(0, self.num_screens-2)
         obs = self.render()
 
         return obs, {}
@@ -168,11 +168,15 @@ class ScreenNavContEnv(Env):
         obs = self.render()
 
         # store trajectory
-        sarst = np.array([old_state, act_x, act_y, button_id, new_reward, self.state, self.total_reward]).reshape((1, 7))
-        if self.agent_stats is None:
-            self.agent_stats = sarst
-        else:
-            np.append(self.agent_stats, sarst, axis=0)
+        info = {
+            "s": old_state,
+            "ax": act_x,
+            "ay": act_y,
+            "button": button_id,
+            "r": new_reward,
+            "s'": self.state,
+            "t_r": self.total_reward
+        }
 
         # update number of time steps
         self.timesteps += 1
@@ -181,7 +185,7 @@ class ScreenNavContEnv(Env):
         truncated = (self.timesteps >= self.max_ep_len) # truncate environment when you exceed max time steps
         terminated = (not truncated) and (self.state == self.target) # terminate environment when target state is reached
 
-        return obs, new_reward, terminated, truncated, {}
+        return obs, new_reward, terminated, truncated, info
 
     def close(self):
         super().close() # call close function of parent's class

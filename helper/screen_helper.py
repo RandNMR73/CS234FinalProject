@@ -1,7 +1,7 @@
 import numpy as np
 import random
 
-from bisect import bisect_left
+from bisect import bisect_right
 
 from helper.graph_helper import *
 from helper.debug import *
@@ -106,8 +106,12 @@ def get_button(act_x, act_y, width, height, gap_x, gap_y, button_width, button_h
     assert(act_y >= 0 and act_y < height)
 
     # check if given coordinates match up with button ranges
-    x_ind = bisect_left(x_coords, act_x)
-    y_ind = bisect_left(y_coords, act_y)
+    x_ind = bisect_right(x_coords, act_x) - 1
+    y_ind = bisect_right(y_coords, act_y) - 1
+
+    # print()
+    # print(x_ind)
+    # print(y_ind)
 
     if (x_ind % 2 == 0) or (y_ind % 2 == 0):
         return -1
@@ -115,7 +119,14 @@ def get_button(act_x, act_y, width, height, gap_x, gap_y, button_width, button_h
         x_id = (x_ind - 1) // 2
         y_id = (y_ind - 1) // 2
 
+        # print()
+        # print(x_id)
+        # print(y_id)
+
         button_id = x_id + y_id * num_cols
+
+        # print(button_id)
+        # print(num_buttons)
 
         if (button_id >= 0 and button_id < num_buttons):
             return button_id

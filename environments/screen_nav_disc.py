@@ -144,11 +144,13 @@ class ScreenNavDiscEnv(Env):
         self.total_reward += new_reward
 
         # store trajectory
-        sarst = np.array([old_state, action, new_reward, self.state, self.total_reward]).reshape((1, 5))
-        if self.agent_stats is None:
-            self.agent_stats = sarst
-        else:
-            np.append(self.agent_stats, sarst, axis=0)
+        info = {
+            "s": old_state,
+            "a": action,
+            "r": new_reward,
+            "s'": self.state,
+            "t_r": self.total_reward
+        }
 
         # update number of time steps
         self.timesteps += 1
@@ -157,7 +159,7 @@ class ScreenNavDiscEnv(Env):
         truncated = (self.timesteps >= self.max_ep_len) # truncate environment when you exceed max time steps
         terminated = (not truncated) and (self.state == self.target) # terminate environment when target state is reached
 
-        return obs, new_reward, terminated, truncated, {}
+        return obs, new_reward, terminated, truncated, info
 
     def close(self):
         super().close() # call close function of parent's class

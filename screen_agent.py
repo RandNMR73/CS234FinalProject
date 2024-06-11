@@ -57,10 +57,15 @@ def get_args():
 
     parser.add_argument('--total-timesteps', default=1e4, type=int)
     parser.add_argument('--log-interval', default=4, type=int)
+    parser.add_argument('--save-freq', default=1000, type=int)
 
+    # eval arguments
     parser.add_argument('--model-name', default="", type=str)
     parser.add_argument('--model-dir', default="", type=str)
-    parser.add_argument('--save-freq', default=1000, type=int)
+
+    parser.add_argument('--datetime', default="", type=str)
+    parser.add_argument('--num-trajectories', default=10, type=int)
+    parser.add_argument('--do-checkpoints', default=True, type=bool)
     
     # policy training arguments (DQN)
     parser.add_argument('--dqn-buffer-size', default=10000, type=int)
@@ -90,7 +95,7 @@ def get_args():
     parser.add_argument('--ddpg-tau', default=0.005, type=float)
     parser.add_argument('--ddpg-train-freq', default=1, type=int)
     parser.add_argument('--ddpg-gradient-steps', default=1, type=int)
-    parser.add_argument('--ddpg-optimize-memory-usage', default=False, type=bool)
+    parser.add_argument('--ddpg-optimize-memory-usage', default=False, type=bool)    
 
     args = parser.parse_args()
     return args
@@ -105,12 +110,13 @@ def main():
     output_env_path = output_path + "env/"
     output_image_path = output_env_path + "image/"
 
-    os.mkdir(output_path)
-    os.mkdir(output_env_path)
-    os.mkdir(output_image_path)
+    if (args.mode != 'eval'):
+        os.mkdir(output_path)
+        os.mkdir(output_env_path)
+        os.mkdir(output_image_path)
 
-    with open(output_path + "config.json", "w") as file:
-        json.dump(config, file)
+        with open(output_path + "config.json", "w") as file:
+            json.dump(config, file)
         
     if args.env_type == 'discrete':
         if args.mode == 'test':
@@ -132,9 +138,9 @@ def main():
 
         elif args.mode == 'eval':
             if (args.algorithm == "DQN"):
-                test_dqn(args, output_path, output_env_path)
+                test_dqn(args)
             elif (args.algorithm == "PPO"):
-                test_ppo(args, output_path, output_env_path)
+                test_ppo(args)
     
     elif args.env_type == 'continuous':
         if args.mode == 'test':
@@ -156,9 +162,9 @@ def main():
 
         elif args.mode == 'eval':
             if (args.algorithm == "PPO"):
-                test_ppo(args, output_path, output_env_path)
+                test_ppo(args)
             elif (args.algorithm == "DDPG"):
-                test_ddpg(args, output_path, output_env_path)
+                test_ddpg(args)
 
 if __name__ == '__main__':
     main()
