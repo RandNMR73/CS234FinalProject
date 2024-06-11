@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Set PYTHONPATH to include the current directory
+export PYTHONPATH=$(pwd):$PYTHONPATH
+
 # Define hyperparameter combinations
 declare -a learning_rates=("3e-4" "1e-4")
 declare -a n_steps=("256" "512")
