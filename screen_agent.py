@@ -77,6 +77,16 @@ def get_args():
     parser.add_argument('--n-epochs', default=10, type=int)
     parser.add_argument('--n-steps', default=256, type=int)
 
+    # additional policy training arguments (DDPG)
+    parser.add_argument('--ddpg-buffer-size', default=1000000, type=int)
+    parser.add_argument('--ddpg-learning-starts', default=100, type=int)
+    parser.add_argument('--ddpg-batch-size', default=256, type=int)
+    parser.add_argument('--ddpg-tau', default=0.005, type=float)
+    parser.add_argument('--ddpg-gamma', default=0.99, type=float)
+    parser.add_argument('--ddpg-train_freq', default=1, type=int)
+    parser.add_argument('--ddpg-gradient_steps', default=1, type=int)
+    parser.add_argument('--ddpg-optimize-memory-usage', default=False, type=bool)
+
     args = parser.parse_args()
     return args
     

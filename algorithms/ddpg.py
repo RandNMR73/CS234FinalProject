@@ -8,7 +8,28 @@ from environments.screen_nav_cont import ScreenNavContEnv
 # function to train DQN algorithm given parameters
 def train_ddpg(env, args, output_path, new_logger, output_checkpoint_path):
     # change parameters using args from argument parser
-    model = DDPG()
+    model = DDPG(
+        policy=args.policy,
+        env=env,
+        learning_rate=args.lr_rate,
+        buffer_size=args.ddpg_buffer_size,
+        learning_starts=args.ddpg_learning_starts,
+        batch_size=args.ddpg_batch_size,
+        tau=args.ddpg_tau,
+        gamma=args.ddpg_gamma,
+        train_freq=args.ddpg_train_freq,
+        gradient_steps=args.ddpg_gradient_steps,
+        action_noise=None,
+        replay_buffer_class=None,
+        replay_buffer_kwargs=None,
+        optimize_memory_usage=args.ddpg_optimize_memory_usage,
+        tensorboard_log=output_path,
+        policy_kwargs=None,
+        verbose=args.verbose,
+        seed=args.agent_seed,
+        device=args.device,
+        _init_setup_model=True,
+    )
 
     model.set_logger(new_logger)
 
