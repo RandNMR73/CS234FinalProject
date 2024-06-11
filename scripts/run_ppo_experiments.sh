@@ -30,12 +30,23 @@ for lr in "${learning_rates[@]}"; do
 
           # Run the training script with the current hyperparameters
           echo "Starting training..."
-          python algorithms/ppo.py \
+          python screen_agent.py \
+            --env-type continuous \
+            --algorithm PPO \
+            --mode train \
+            --ppo-policy MlpPolicy \
             --ppo-lr-rate $lr \
             --ppo-n-steps $steps \
             --ppo-batch-size $batch \
             --ppo-n-epochs $epochs \
             --ppo-gamma $g \
+            --ppo-total-timesteps 10000 \
+            --save-freq 1000 \
+            --screen-width 16 \
+            --screen-height 32 \
+            --num-tiers 3 \
+            --num-branches 1 2 2 \
+            --model-name ppo-test \
             --output-path $exp_output_dir
           echo "Finished training for lr=$lr, steps=$steps, batch=$batch, epochs=$epochs, gamma=$g"
         done
