@@ -11,20 +11,20 @@ def train_ppo(env, args, output_path, new_logger, output_checkpoint_path):
     # change parameters using args from argument parser
     # there are still more parameters which can be changed
     model = PPO(
-        policy=args.ppo-policy,
+        policy=args.ppo_policy,
         env=env,
-        learning_rate=args.ppo-lr_rate,
-        n_steps=args.ppo-n_steps,
-        batch_size=args.ppo-batch_size,
-        n_epochs=args.ppo-n_epochs,
-        gamma=args.ppo-gamma,
-        max_grad_norm=args.ppo-max-grad-norm,
+        learning_rate=args.ppo_lr_rate,
+        n_steps=args.ppo_n_steps,
+        batch_size=args.ppo_batch_size,
+        n_epochs=args.ppo_n_epochs,
+        gamma=args.ppo_gamma,
+        max_grad_norm=args.ppo_max_grad_norm,
         stats_window_size=100,
         tensorboard_log=output_path,
         policy_kwargs=None,
-        verbose=args.ppo-verbose,
-        seed=args.ppo-agent-seed,
-        device=args.ppo-device,
+        verbose=args.ppo_verbose,
+        seed=args.ppo_agent_seed,
+        device=args.ppo_device,
         _init_setup_model=True,
     )
 
