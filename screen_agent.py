@@ -103,6 +103,7 @@ def get_args():
     parser.add_argument('--ddpg-gradient_steps', default=1, type=int)
     parser.add_argument('--ddpg-optimize-memory-usage', default=False, type=bool)
 
+    parser.add_argument('--model-name', default="", type=str)
     parser.add_argument('--sac-total-timesteps', default=1e6, type=int)
     parser.add_argument('--sac-log-interval', default=10, type=int)
     parser.add_argument('--sac-model-name', default="", type=str)
