@@ -103,7 +103,11 @@ def get_args():
     parser.add_argument('--ddpg-gradient_steps', default=1, type=int)
     parser.add_argument('--ddpg-optimize-memory-usage', default=False, type=bool)
 
-    parser.add_argument('--model-name', default="", type=str)
+    parser.add_argument('--sac-total-timesteps', default=1e6, type=int)
+    parser.add_argument('--sac-log-interval', default=10, type=int)
+    parser.add_argument('--sac-model-name', default="", type=str)
+    parser.add_argument('--sac-model-dir', default="", type=str)
+    parser.add_argument('--sac-traj-log-freq', default=100, type=int)
     parser.add_argument('--output-path', default="", type=str)
 
     args = parser.parse_args()
@@ -124,7 +128,11 @@ def main():
         config['device'] = args.dqn_device
         config['gamma'] = args.dqn_gamma
         config['traj_log_freq'] = args.dqn_traj_log_freq
-    elif args.algorithm == "DDPG":
+    elif args.algorithm == "SAC":
+        config['agent_seed'] = args.sac_agent_seed
+        config['device'] = args.sac_device
+        config['gamma'] = args.sac_gamma
+        config['traj_log_freq'] = args.sac_traj_log_freq
         config['agent_seed'] = args.ddpg_agent_seed
         config['device'] = args.ddpg_device
         config['gamma'] = args.ddpg_gamma

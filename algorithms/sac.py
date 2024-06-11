@@ -13,8 +13,8 @@ def train_sac(env, args, output_path, new_logger, output_checkpoint_path):
     model.set_logger(new_logger)
 
     model.learn(
-        total_timesteps=args.total_timesteps,
-        log_interval=args.log_interval,
+        total_timesteps=args.sac_total_timesteps,
+        log_interval=args.sac_log_interval,
         progress_bar=True
     )
 
