@@ -1,14 +1,14 @@
 import json
 import numpy as np
 
-from stable_baselines3 import DDPG
+from stable_baselines3 import SAC
 
 from environments.screen_nav_cont import ScreenNavContEnv
 
 # function to train DQN algorithm given parameters
-def train_ddpg(env, args, output_path, new_logger):
+def train_sac(env, args, output_path, new_logger):
     # change parameters using args from argument parser
-    model = DDPG()
+    model = SAC()
 
     model.set_logger(new_logger)
 
@@ -23,7 +23,7 @@ def train_ddpg(env, args, output_path, new_logger):
     env._reset_trajs()
 
 # function to test DQN algorithm
-def test_ddpg(args, output_path, output_env_path):
+def test_sac(args, output_path, output_env_path):
     # initialize new config dictionary from previous run
     test_config = None
     with open(args.model_dir + 'config.json') as json_file:

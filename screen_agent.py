@@ -14,18 +14,19 @@ from environments.screen_nav_disc import ScreenNavDiscEnv
 from environments.screen_nav_cont import ScreenNavContEnv
 
 from algorithms.dqn import train_dqn, test_dqn
-# from algorithms.ppo import train_ppo, test_ppo
-# from algorithms.ddpg import train_ddpg, test_ddpg
+from algorithms.ppo import train_ppo, test_ppo
+from algorithms.ddpg import train_ddpg, test_ddpg
+from algorithms.sac import train_sac, test_sac
 
 def get_args():
     parser = argparse.ArgumentParser('RL Screen Agent', add_help=False)
 
     # testing arguments
-    parser.add_argument('--mode', choices=['test', 'train', 'predict'], default='test', type=str)
+    parser.add_argument('--mode', choices=['test', 'train', 'eval'], default='test', type=str)
 
     # environment arguments
     parser.add_argument('--env-type', choices=['discrete', 'continuous'], default='discrete', type=str)
-    parser.add_argument('--algorithm', choices=['DQN', 'PPO', 'DDPG'], default='DQN', type=str)
+    parser.add_argument('--algorithm', choices=['DQN', 'PPO', 'DDPG', 'SAC'], default='DQN', type=str)
 
     parser.add_argument('--screen-width', default=256, type=int)
     parser.add_argument('--screen-height', default=512, type=int)
@@ -118,7 +119,7 @@ def main():
     config = vars(args)
 
     dt = datetime.now().strftime("%d-%m-%Y-%H-%M-%S")
-    output_path = "output/{}/{}/".format(args.mode, dt)
+    output_path = "output/{}/{}/{}/{}/".format(args.env_type, args.algorithm, args.mode, dt)
     output_env_path = output_path + "env/"
     output_image_path = output_env_path + "image/"
 
@@ -145,7 +146,7 @@ def main():
             if (args.algorithm == "DQN"):
                 train_dqn(env, args, output_path, new_logger)
 
-        elif args.mode == 'predict':
+        elif args.mode == 'eval':
             if (args.algorithm == "DQN"):
                 test_dqn(args, output_path, output_env_path)
     
@@ -164,10 +165,18 @@ def main():
 
             if (args.algorithm == "PPO"):
                 train_ppo(env, args, output_path, new_logger)
+            if (args.algorithm == "DDPG"):
+                train_ddpg(env, args, output_path, new_logger)
+            if (args.algorithm == "SAC"):
+                train_sac(env, args, output_path, new_logger)
 
-        elif args.mode == 'predict':
+        elif args.mode == 'eval':
             if (args.algorithm == "PPO"):
                 test_ppo(args, output_path, output_env_path)
+            if (args.algorithm == "DDPG"):
+                test_ddpg(args, output_path, output_env_path)
+            if (args.algorithm == "SAC"):
+                test_sac(args, output_path, output_env_path)
 
 
 if __name__ == '__main__':
