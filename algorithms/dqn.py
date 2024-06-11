@@ -9,7 +9,7 @@ from environments.screen_nav_disc import ScreenNavDiscEnv
 def train_dqn(env, args, output_path, new_logger):
     # change parameters using args from argument parser
     model = DQN(
-        policy=args.policy,
+        policy=args.dqn-policy,
         env=env,
         learning_rate=args.lr_rate,
         buffer_size=args.buffer_size,
