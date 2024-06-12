@@ -1,11 +1,11 @@
 # general arguments
 env_type="discrete"
 algorithm="DQN"
-mode="train"
+mode="test"
 
 # environment arguments
-width="16"
-height="32"
+width="64"
+height="128"
 num_tiers="3"
 num_branches=(1 2 2)
 max_ep_len="20"
@@ -21,10 +21,10 @@ verbose="1"
 agent_seed="1"
 device="cpu"
 
-total_timesteps='100000'
+total_timesteps='50000'
 log_interval="4"
-model_name="dqn-test"
-save_freq='1000'
+model_name="dqn-branch-run-5"
+save_freq='5000'
 
 # dqn policy arguments
 dqn_buffer_size="1000"

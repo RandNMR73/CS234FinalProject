@@ -1,13 +1,124 @@
--- discrete --
-discrete/DQN
-- 
+--- discrete ---
 
-discrete/PPO
-- 
+discrete/DQN - scaling image size
+- varied params: size
+    - 6x12 - 11-06-2024-13-16-33 # not using
+    - 12x24 - 11-06-2024-13-20-45
+    - 18x36 - 11-06-2024-13-25-25 # not using
+    - 24x48 - 11-06-2024-13-31-17
+    - 48x96 - 11-06-2024-14-20-46
+    - 96x192 - 11-06-2024-14-28-34
+- fixed params:
+    - branches: (1, 3, 2)
+    - num_tiers: 3
 
--- continuous --
-continuous/PPO
-- 
+discrete/DQN - scaling tree depth
+- varied params: num_tiers
+    - (2) - 11-06-2024-13-37-47
+    - (2, 2) - 11-06-2024-13-46-22
+    - (2, 2, 2) - 11-06-2024-14-08-50
+    - (2, 2, 2, 2) - 11-06-2024-14-12-08
+    - (2, 2, 2, 2, 2) - 11-06-2024-14-14-50
+- fixed params:
+    - branches: (2, ...)
+    - size: 12x24
 
-continuous/DDPG
-- 
+discrete/DQN - scaling tree branches
+- varied params: branches
+    - (2, 2, 1) - 11-06-2024-14-34-15
+    - (2, 2, 2) - 11-06-2024-14-54-12
+    - (2, 2, 4) - 11-06-2024-15-00-08
+    - (2, 4, 4) - 11-06-2024-15-00-58
+    - (4, 4, 4) - 11-06-2024-15-08-45
+- fixed params:
+    - num_tiers: 3
+    - size: 12x24
+
+discrete/PPO - scaling image size
+- varied params: size
+    - 12x24 - output/discrete/PPO/train/11-06-2024-14-07-22-12x24/
+    - 18x36 - output/discrete/PPO/train/11-06-2024-14-20-39-18x36/
+    - 24x48 - output/discrete/PPO/train/11-06-2024-14-08-33-24x48/
+    - 48x96 - output/discrete/PPO/train/11-06-2024-14-10-47-48x96/
+    - 96x192 - output/discrete/PPO/train/11-06-2024-14-21-59-96x192/
+- fixed params:
+    - branches: (1, 3, 2)
+    - num_tiers: 3
+
+discrete/PPO - scaling tree depth
+- varied params: num_tiers
+    - (2) - output/discrete/PPO/train/11-06-2024-14-32-51-depth1
+    - (2, 2) - output/discrete/PPO/train/11-06-2024-14-33-54-depth2
+    - (2, 2, 2) - output/discrete/PPO/train/11-06-2024-14-34-53-depth3
+    - (2, 2, 2, 2) - output/discrete/PPO/train/11-06-2024-14-37-49-depth4
+    - (2, 2, 2, 2, 2) - output/discrete/PPO/train/11-06-2024-14-38-48-depth5
+- fixed params:
+    - branches: (2, ...)
+    - size: 12x24
+
+discrete/PPO - scaling tree branches
+- varied params: branches
+    - (2, 2, 2) - output/discrete/PPO/train/11-06-2024-14-40-55-branch222
+    - (2, 2, 1) - output/discrete/PPO/train/11-06-2024-14-41-52-branch221
+    - (2, 2, 4) - output/discrete/PPO/train/11-06-2024-14-43-12-branch224
+    - (2, 4, 4) - output/discrete/PPO/train/11-06-2024-14-44-09-branch244
+    - (4, 4, 4) - output/discrete/PPO/train/11-06-2024-14-45-05-branch444
+- fixed params:
+    - num_tiers: 3
+    - size: 12x24
+
+--- continuous ---
+
+continuous/PPO - scaling image size
+- varied params: size
+    - 6x12 - 
+    - 8x16 - 
+    - 10x20 - 
+- fixed params:
+    - branches: (1, 2, 2)
+    - num_tiers: 3
+
+continuous/PPO - scaling tree depth
+- varied params: num_tiers
+    - (1, 2) - 
+    - (1, 2, 2) - 
+    - (1, 2, 2, 2) - 
+- fixed params:
+    - branches: (2, ...)
+    - size: 8x16
+
+continuous/PPO - scaling tree branches
+- varied params: branches
+    - (1, 2, 2) - 
+    - (2, 2, 2) - 
+    - (4, 2, 2) - 
+- fixed params:
+    - num_tiers: 3
+    - size: 8x16
+
+continuous/DDPG - scaling image size
+- varied params: size
+    - 6x12 - 
+    - 8x16 - 
+    - 10x20 - 
+- fixed params:
+    - branches: (1, 2, 2)
+    - num_tiers: 3
+
+continuous/DDPG - scaling tree depth
+- varied params: num_tiers
+    - (1, 2) - 
+    - (1, 2, 2) - 
+    - (1, 2, 2, 2) - 
+- fixed params:
+    - branches: (2, ...)
+    - size: 8x16
+
+continuous/DDPG - scaling tree branches
+- varied params: branches
+    - (1, 2, 2) - 
+    - (2, 2, 2) - 
+    - (4, 2, 2) - 
+- fixed params:
+    - num_tiers: 3
+    - size: 8x16

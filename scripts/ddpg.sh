@@ -4,8 +4,8 @@ algorithm="DDPG"
 mode="train"
 
 # environment arguments
-width="16"
-height="32"
+width="10"
+height="20"
 num_tiers="3"
 num_branches=(1 2 2)
 max_ep_len="20"
@@ -21,10 +21,10 @@ verbose="1"
 agent_seed="1"
 device="cpu"
 
-total_timesteps='25000'
+total_timesteps='100000'
 log_interval="4"
-model_name="ddpg-test"
-save_freq='1000'
+model_name="ddpg-size-run-3"
+save_freq='10000'
 
 # ddpg policy arguments
 ddpg_buffer_size="1000"
